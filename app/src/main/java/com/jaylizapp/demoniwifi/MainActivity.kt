@@ -130,22 +130,31 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
     )
 
     val demoniTitle = buildAnnotatedString {
-        // Parte "Demoni" (Rojo)
+        // Parte "De" (Rojo)
         withStyle(style = SpanStyle(
-            color = MaterialTheme.colorScheme.primary,
+            color = DemonicRed,
             fontWeight = FontWeight.ExtraBold,
             shadow = titleShadow
         )) {
-            append("Demoni")
+            append("De")
         }
 
-        // Parte final y Emoji 😈
+        // Parte "moni" (Amarillo)
+        withStyle(style = SpanStyle(
+            color = PentagramGold,
+            fontWeight = FontWeight.ExtraBold,
+            shadow = titleShadow
+        )) {
+            append("moni")
+        }
+
+        // Parte "Wifi" (Blanco)
         withStyle(style = SpanStyle(
             color = Color.White,
             fontWeight = FontWeight.ExtraBold,
             shadow = titleShadow
         )) {
-            append("Wifi 😈")
+            append("Wifi 📡")
         }
     }
 
@@ -153,20 +162,37 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
-                drawerContainerColor = Color(0xFF1A0000),
+                drawerContainerColor = EvilBlack,
                 drawerShape = RoundedCornerShape(0.dp),
                 modifier = Modifier.width(280.dp)
             ) {
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(38.dp))
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Text(
+                        text = "😈",
+                        fontSize = 42.sp,
+                        style = androidx.compose.ui.text.TextStyle(shadow = titleShadow)
+                    )
                     Text(
                         text = demoniTitle,
                         style = MaterialTheme.typography.headlineMedium
                     )
-                    HorizontalDivider(color = DemonicRed, thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
+                    // Línea difuminada del centro a los bordes
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(
+                                brush = androidx.compose.ui.graphics.Brush.horizontalGradient(
+                                    colors = listOf(Color.Transparent, DemonicRed, Color.Transparent)
+                                )
+                            )
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
                 
                 NavigationDrawerItem(
@@ -225,7 +251,16 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    HorizontalDivider(color = Color.DarkGray, thickness = 0.5.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(
+                                brush = androidx.compose.ui.graphics.Brush.horizontalGradient(
+                                    colors = listOf(Color.Transparent, Color.DarkGray, Color.Transparent)
+                                )
+                            )
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "BY JAYLIZ & DEMONI-TEAM",
@@ -250,10 +285,13 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            text = "📡 DEMONI-WIFI 📡",
-                            color = DemonicRed,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            text = buildAnnotatedString {
+                                withStyle(style = SpanStyle(shadow = titleShadow)) {
+                                    append("😈 ")
+                                }
+                                append(demoniTitle)
+                            },
+                            style = MaterialTheme.typography.headlineMedium
                         )
                     },
                     navigationIcon = {
@@ -262,10 +300,10 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = EvilBlack,
+                        containerColor = Color(0xFF100607),
                         scrolledContainerColor = Color.Unspecified,
                         navigationIconContentColor = Color.Unspecified,
-                        titleContentColor = DemonicRed,
+                        titleContentColor = Color.Unspecified,
                         actionIconContentColor = Color.Unspecified
                     )
                 )
@@ -275,8 +313,8 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFF1A0000))
-                        .padding(16.dp)
+                        .background(EvilBlack)
+                        .padding(14.dp)
                         .navigationBarsPadding()
                         .border(1.dp, DemonicRed)
                         .padding(8.dp)
@@ -346,7 +384,9 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
         ) { innerPadding ->
             Column(
                 modifier = Modifier
-                    .padding(top = innerPadding.calculateTopPadding(), start = 8.dp, end = 8.dp, bottom = 8.dp)
+                    .padding(innerPadding)
+                    .padding(horizontal = 8.dp)
+                    .padding(bottom = 8.dp)
                     .fillMaxSize()
             ) {
                 Button(
@@ -356,12 +396,14 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                             Toast.makeText(context, "Rastreando espectros...", Toast.LENGTH_SHORT).show()
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF440000)),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(0.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF330000)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(0.5.dp, DemonicRed.copy(alpha = 0.6f), RoundedCornerShape(4.dp)),
+                    shape = RoundedCornerShape(4.dp),
                     contentPadding = PaddingValues(4.dp)
                 ) {
-                    Text("REFRESCAR DIMENSIÓN WIFI", color = Color.White, fontSize = 12.sp)
+                    Text("REFRESCAR DIMENSIÓN WIFI", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -369,7 +411,7 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFF330000))
+                        .background(EvilBlack)
                         .border(1.dp, DemonicRed)
                         .padding(4.dp)
                 ) {
@@ -380,7 +422,7 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                 }
 
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.weight(1f).fillMaxWidth()
                 ) {
                     items(networks) { network ->
                         WifiRow(
@@ -413,7 +455,7 @@ fun WifiRow(network: WifiNetwork, isSelected: Boolean, onSelect: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(if (isSelected) Color(0xFF440000) else Color.Transparent)
+            .background(if (isSelected) Color(0xFF220000) else Color.Transparent)
             .border(0.5.dp, DemonicRed)
             .clickable { onSelect() }
             .padding(vertical = 8.dp, horizontal = 4.dp),
