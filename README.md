@@ -1,6 +1,6 @@
 # 😈 DemoniWifi ⚡
 
-## **DemoniWifi App** 
+## **DemoniWifi App**    ![Android](https://img.shields.io/badge/Android-100607?style=flat&logo=android&logoColor=yellow) ![Kotlin](https://img.shields.io/badge/kotlin-100607?style=flat&logo=kotlin&logoColor=yellow) 
 es una aplicación móvil con una interfaz temática orientada a pruebas de red y auditorías sobre conexiones Wi-Fi. La herramienta permite gestionar escaneos de redes cercanas y ejecutar secuencias de prueba mediante credenciales predefinidas.
 
 ---
@@ -20,6 +20,16 @@ es una aplicación móvil con una interfaz temática orientada a pruebas de red 
 2. **Seleccionar Objetivos:** Marca la casilla correspondiente a las redes que quieras auditar.
 3. **Ingresar Credencial:** Introduce la clave de prueba en el campo *Clave del Abismo (General)*.
 4. **Ejecutar:** Presiona **INVOCAR ATAQUE SECUENCIAL** para iniciar la secuencia de pruebas sobre los objetivos seleccionados.
+
+---
+
+## 📸 Screenshots
+
+<p align="center">
+  <img src="https://github.com/Jaypsmall/DemoniWifi/blob/master/assets/Screenshoot2.jpg" width="30%" />
+  <img src="https://github.com/Jaypsmall/DemoniWifi/blob/master/assets/Screenshot_1.jpg" width="30%" />
+  <img src="https://github.com/Jaypsmall/DemoniWifi/blob/master/assets/Screenshoot3.jpg" width="30%" />
+</p>
 
 ---
 
