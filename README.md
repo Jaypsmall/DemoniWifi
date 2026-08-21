@@ -1,25 +1,25 @@
 # 😈 DemoniWifi ⚡
 
 ## **DemoniWifi App**    ![Android](https://img.shields.io/badge/Android-100607?style=flat&logo=android&logoColor=yellow) ![Kotlin](https://img.shields.io/badge/kotlin-100607?style=flat&logo=kotlin&logoColor=yellow) 
-es una aplicación móvil con una interfaz temática orientada a pruebas de red y auditorías sobre conexiones Wi-Fi. La herramienta permite gestionar escaneos de redes cercanas y ejecutar secuencias de prueba mediante credenciales predefinidas.
+It is a mobile application featuring a themed interface designed for network testing and Wi-Fi connection audits. The tool allows you to manage scans of nearby networks and execute test sequences using predefined credentials.
 
 ---
 
-## 🚀 Características principales
+## 🚀 Key Features
 
-* **Escaneo de redes (Dimensión Wi-Fi):** Muestra las redes Wi-Fi disponibles en tiempo real, especificando el SSID, nivel de señal (RSSI) y el protocolo de seguridad (WPA2, OPEN, etc.).
-* **Ataque Masivo / Secuencial:** Permite seleccionar múltiples redes objetivo para realizar pruebas de autenticación encadenadas.
-* **Inyección de claves por lote:** Posibilidad de probar credenciales universales o parámetros de prueba de forma secuencial en los puntos de acceso seleccionados.
-* **Interfaz Personalizada:** Estilo visual temático con indicadores de estado en tiempo real (*Procesando almas...*, *Conectando al estilo clásico...*, *Ritual de conexión finalizado*).
+* **Network Scanning (Wi-Fi Dimension):** Displays available Wi-Fi networks in real-time, specifying the SSID, signal strength (RSSI), and security protocol (WPA2, OPEN, etc.).
+* **Mass / Sequential Attack:** Allows you to select multiple target networks to perform chained authentication tests.
+* **Batch Key Injection:** Ability to test universal credentials or test parameters sequentially on selected access points.
+* **Custom Interface:** Themed visual style with real-time status indicators (*Processing souls...*, *Connecting classic-style...*, *Connection ritual complete*).
 
 ---
 
-## 🛠️ Modo de uso
+## 🛠️ Usage Instructions
 
-1. **Escanear Dimensión:** Pulsa sobre el botón superior para refrescar la lista de redes detectadas.
-2. **Seleccionar Objetivos:** Marca la casilla correspondiente a las redes que quieras auditar.
-3. **Ingresar Credencial:** Introduce la clave de prueba en el campo *Clave del Abismo (General)*.
-4. **Ejecutar:** Presiona **INVOCAR ATAQUE SECUENCIAL** para iniciar la secuencia de pruebas sobre los objetivos seleccionados.
+1. **Scan Dimension:** Tap the top button to refresh the list of detected networks.
+2. **Select Targets:** Check the box next to the networks you wish to audit.
+3. **Enter Credential:** Input the test key into the *Abyss Key (General)* field.
+4. **Execute:** Press **INVOKE SEQUENTIAL ATTACK** to start the test sequence on the selected targets.
 
 ---
 
@@ -33,10 +33,10 @@ es una aplicación móvil con una interfaz temática orientada a pruebas de red 
 
 ---
 
-## 👥 Créditos
+## 👥 Credits
 
-Desarrollado por **Jayliz & Demoni-Team**
+Developed by **Jayliz & Demoni-Team**
 
 ---
 
-> **Aviso:** Esta herramienta ha sido diseñada exclusivamente con fines educativos y para la realización de pruebas en entornos propios o autorizados.
+> **Notice:** This tool has been designed exclusively for educational purposes and for testing in private or authorized environments.
