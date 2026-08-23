@@ -26,9 +26,7 @@ It is a mobile application featuring a themed interface designed for network tes
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="https://github.com/Jaypsmall/DemoniWifi/blob/master/assets/Screenshoot2.jpg" width="30%" />
-  <img src="https://github.com/Jaypsmall/DemoniWifi/blob/master/assets/Screenshot_1.jpg" width="30%" />
-  <img src="https://github.com/Jaypsmall/DemoniWifi/blob/master/assets/Screenshoot3.jpg" width="30%" />
+  <img src="https://github.com/Jaypsmall/DemoniWifi/blob/master/assets/DemoniWifi_assets.png" width="99%" />
 </p>
 
 ---
