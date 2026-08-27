@@ -1,0 +1,267 @@
+/* =========================================================
+   DEMONIWIFI
+   Android Native / Kotlin
+   ========================================================= */
+
+:root {
+  --bg: #080808;
+  --card: #111111;
+  --red: #ff2020;
+  --yellow: #ffd21f;
+  --white: #f5f5f5;
+  --gray: #999;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  line-height: 1.5;
+}
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.container {
+  width: 92%;
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+header {
+  text-align: center;
+  padding: 30px 0 15px;
+}
+
+.logo {
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+}
+
+.logo .de {
+  color: var(--red);
+}
+
+.logo .moni {
+  color: var(--yellow);
+}
+
+.logo .wifi {
+  color: var(--white);
+}
+
+.tagline {
+  color: var(--gray);
+  margin-top: 6px;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.hero h1 {
+  font-size: 2.3rem;
+  margin-bottom: 8px;
+}
+
+.hero h1 span {
+  color: var(--red);
+}
+
+.hero p {
+  color: var(--gray);
+  max-width: 650px;
+  margin: auto;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 9px;
+  font-weight: bold;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button.primary {
+  background: var(--red);
+  color: white;
+  box-shadow: 0 0 18px rgba(255, 32, 32, 0.25);
+}
+
+.button.primary:hover {
+  box-shadow: 0 0 28px rgba(255, 32, 32, 0.45);
+}
+
+.button.secondary {
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+}
+
+.button.secondary:hover {
+  background: rgba(255, 210, 31, 0.08);
+}
+
+/* =========================================================
+   INFO
+   ========================================================= */
+
+.info {
+  padding: 25px 0;
+}
+
+.info-card {
+  background: var(--card);
+  border: 1px solid rgba(255, 32, 32, 0.25);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.info-card h2 {
+  margin-bottom: 8px;
+}
+
+.info-card p {
+  color: var(--gray);
+}
+
+/* =========================================================
+   SCREENSHOT
+   ========================================================= */
+
+.screenshots {
+  padding: 20px 0 30px;
+}
+
+.screenshot-frame {
+  width: 100%;
+  overflow: hidden;
+
+  background: #050505;
+
+  border: 1px solid rgba(255, 32, 32, 0.35);
+  border-radius: 16px;
+
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.screenshot-frame:hover {
+  transform: translateY(-3px);
+  border-color: var(--yellow);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+.screenshot-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 15px;
+}
+
+/* =========================================================
+   TECH
+   ========================================================= */
+
+.tech-stack {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 15px 0 30px;
+}
+
+.tech {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  padding: 6px 11px;
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  padding: 20px 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+footer strong {
+  color: var(--red);
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .logo {
+    font-size: 2.8rem;
+  }
+
+  .hero h1 {
+    font-size: 1.9rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .button {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
+
+}
