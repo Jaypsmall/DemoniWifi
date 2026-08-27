@@ -23,8 +23,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,12 +41,13 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import com.jaylizapp.demoniwifi.ui.theme.DemoniWifiTheme
-import com.jaylizapp.demoniwifi.ui.theme.DemonicRed
-import com.jaylizapp.demoniwifi.ui.theme.EvilBlack
-import com.jaylizapp.demoniwifi.ui.theme.PentagramGold
+import com.jaylizapp.demoniwifi.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.draw.shadow
 
 class MainActivity : ComponentActivity() {
     private lateinit var wifiHelper: WifiHelper
@@ -65,9 +68,7 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            DemoniWifiTheme {
-                DemonicWifiApp(wifiHelper, networksState)
-            }
+            DemonicWifiApp(wifiHelper, networksState)
         }
     }
 
@@ -95,51 +96,381 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
     val networks by networksState
     
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    
+    // El modo oscuro persiste al girar o salir
+    var isDarkTheme by rememberSaveable { mutableStateOf(true) }
+    var isEnglish by rememberSaveable { mutableStateOf(false) }
 
-    var selectedSsids by remember { mutableStateOf(setOf<String>()) }
-    var passwordInput by remember { mutableStateOf("") }
-    var isConnecting by remember { mutableStateOf(false) }
+    DemoniWifiTheme(darkTheme = isDarkTheme) {
+        var selectedSsids by remember { mutableStateOf(setOf<String>()) }
+        var passwordInput by remember { mutableStateOf("") }
+        var isConnecting by remember { mutableStateOf(false) }
 
-    var hasPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-    }
+        var hasPermission by remember {
+            mutableStateOf(
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            )
+        }
 
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasPermission = isGranted
-    }
+        val launcher = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            hasPermission = isGranted
+        }
 
-    LaunchedEffect(hasPermission) {
-        if (hasPermission) {
-            networksState.value = wifiHelper.getScanResults()
-        } else {
-            launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        LaunchedEffect(hasPermission) {
+            if (hasPermission) {
+                networksState.value = wifiHelper.getScanResults()
+            } else {
+                launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            drawerContent = {
+                ModalDrawerSheet(
+                    drawerContainerColor = MaterialTheme.colorScheme.background,
+                    drawerShape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
+                    modifier = Modifier.width(300.dp)
+                ) {
+                    DrawerContent(
+                        isDarkMode = isDarkTheme,
+                        isEnglish = isEnglish,
+                        onModeToggle = { isDarkTheme = !isDarkTheme },
+                        onLanguageToggle = { isEnglish = !isEnglish },
+                        onScanClick = {
+                            scope.launch {
+                                drawerState.close()
+                                wifiHelper.startScan()
+                                Toast.makeText(context, "Rastreando...", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        onAtaqueClick = {
+                            scope.launch {
+                                drawerState.close()
+                                if (selectedSsids.isNotEmpty() && !isConnecting) {
+                                    isConnecting = true
+                                    for (ssid in selectedSsids) {
+                                        Toast.makeText(context, "Atacando $ssid...", Toast.LENGTH_SHORT).show()
+                                        val finalPass = passwordInput.ifEmpty { wifiHelper.getWifiPasswordRoot(ssid) }
+                                        wifiHelper.connectToWifi(ssid, finalPass, context)
+                                        delay(8000)
+                                    }
+                                    isConnecting = false
+                                    Toast.makeText(context, "Finalizado", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize().imePadding(),
+                topBar = {
+                    Column {
+                        CenterAlignedTopAppBar(
+                            modifier = Modifier.height(64.dp),
+                            title = {
+                                StyledTitle(fontSize = 20, showDevil = true, showAntenna = true)
+                            },
+                            navigationIcon = {
+                                IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                    Icon(Icons.Default.Menu, contentDescription = "Menu", tint = DemonicRed)
+                                }
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = if (isDarkTheme) Color.Black.copy(alpha = 0.5f) else AshGrey.copy(alpha = 0.9f),
+                                titleContentColor = Color.Unspecified
+                            )
+                        )
+                        // LÍNEA DE PLATA (3.dp)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(3.dp)
+                                .background(
+                                    brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                                        colors = listOf(ShinySilver, Color.Gray)
+                                    )
+                                )
+                        )
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.background,
+                bottomBar = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(14.dp)
+                            .navigationBarsPadding()
+                            .border(1.dp, DemonicRed)
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = if (selectedSsids.isNotEmpty()) "SELECCIONADAS: ${selectedSsids.size}" else "SELECCIONA LAS REDES OBJETIVO",
+                            color = PentagramGold,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = passwordInput,
+                            onValueChange = { passwordInput = it },
+                            label = { Text("CLAVE DEL ABISMO", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                focusedBorderColor = DemonicRed,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                                focusedLabelColor = DemonicRed,
+                                cursorColor = DemonicRed
+                            ),
+                            singleLine = true,
+                            enabled = !isConnecting
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = {
+                                if (selectedSsids.isNotEmpty() && !isConnecting) {
+                                    isConnecting = true
+                                    scope.launch {
+                                        for (ssid in selectedSsids) {
+                                            val finalPass = passwordInput.ifEmpty { wifiHelper.getWifiPasswordRoot(ssid) }
+                                            wifiHelper.connectToWifi(ssid, finalPass, context)
+                                            delay(8000)
+                                        }
+                                        isConnecting = false
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = if(isConnecting) Color.Gray else DemonicRed),
+                            shape = RoundedCornerShape(0.dp),
+                            enabled = !isConnecting
+                        ) {
+                            Text(if(isConnecting) "PROCESANDO..." else "ATAQUE SECUENCIAL", color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(horizontal = 8.dp)
+                        .padding(bottom = 8.dp)
+                        .fillMaxSize()
+                ) {
+                    Button(
+                        onClick = { if (hasPermission) wifiHelper.startScan() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isDarkTheme) Color(0xFF330000) else Color(0xFFB71C1C).copy(alpha = 0.8f)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(0.5.dp, DemonicRed.copy(alpha = 0.6f), RoundedCornerShape(4.dp)),
+                        shape = RoundedCornerShape(4.dp),
+                        contentPadding = PaddingValues(4.dp)
+                    ) {
+                        Text("REFRESCAR DIMENSIÓN WIFI", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surface)
+                            .border(1.dp, DemonicRed)
+                            .padding(4.dp)
+                    ) {
+                        Text("SEL.", Modifier.weight(0.7f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
+                        Text("SSID", Modifier.weight(3f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text("RSSI", Modifier.weight(0.8f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
+                        Text("SEGUR.", Modifier.weight(1.2f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
+                    }
+
+                    LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                        items(networks) { network ->
+                            WifiRow(
+                                network = network,
+                                isSelected = selectedSsids.contains(network.ssid),
+                                onSelect = {
+                                    selectedSsids = if (selectedSsids.contains(network.ssid)) selectedSsids - network.ssid else selectedSsids + network.ssid
+                                }
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
+}
 
+@Composable
+fun DrawerContent(
+    isDarkMode: Boolean, 
+    isEnglish: Boolean, 
+    onModeToggle: () -> Unit,
+    onLanguageToggle: () -> Unit,
+    onScanClick: () -> Unit,
+    onAtaqueClick: () -> Unit
+) {
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // --- TÍTULO PERSONALIZADO: DemoniWifi ---
+        Text(
+            text = "😈",
+            fontSize = 42.sp,
+            style = androidx.compose.ui.text.TextStyle(shadow = Shadow(
+                color = Color.Black.copy(alpha = 0.8f),
+                offset = Offset(6f, 6f),
+                blurRadius = 12f
+            ))
+        )
+        StyledTitle(
+            fontSize = 28, 
+            isCentered = true, 
+            modifier = Modifier.padding(bottom = 16.dp),
+            showDevil = false,
+            showAntenna = true
+        )
+        
+        // Línea roja difuminada (Centro a extremos)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.5.dp)
+                .background(
+                    brush = androidx.compose.ui.graphics.Brush.horizontalGradient(
+                        colors = listOf(Color.Transparent, DemonicRed, Color.Transparent)
+                    )
+                )
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp)) // Padding de la cabecera a los botones
+        
+        // --- BOTONES DEL MENÚ ---
+        DrawerItem(label = if (isEnglish) "Scan" else "Escanear", icon = Icons.Default.Refresh, onClick = onScanClick)
+        Spacer(modifier = Modifier.height(16.dp))
+        DrawerItem(label = if (isEnglish) "Massive Attack" else "Ataque Masivo", icon = Icons.Default.Warning, onClick = onAtaqueClick)
+        Spacer(modifier = Modifier.height(16.dp))
+        DrawerItem(
+            label = if (isDarkMode) (if (isEnglish) "Soul Mode" else "Modo Alma") else (if (isEnglish) "Abyss Mode" else "Modo Abismo"), 
+            icon = if (isDarkMode) Icons.Default.WbSunny else Icons.Default.NightsStay, 
+            onClick = onModeToggle
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        DrawerItem(label = if (isEnglish) "Languages" else "Idiomas", icon = Icons.Default.Language, onClick = onLanguageToggle)
+        Spacer(modifier = Modifier.height(16.dp))
+        DrawerItem(label = if (isEnglish) "Help" else "Ayuda", icon = Icons.AutoMirrored.Filled.Help)
+        
+        Spacer(modifier = Modifier.weight(1f))
+        
+        // --- CRÉDITOS FINALES ---
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp), 
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(
+                        brush = androidx.compose.ui.graphics.Brush.horizontalGradient(
+                            colors = listOf(Color.Transparent, Color.DarkGray, Color.Transparent)
+                        )
+                    )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            val footerColor = if (isDarkMode) AshGrey else Color.DarkGray
+            Text(
+                text = "BY JAYLIZ & DEMONI-TEAM",
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold, 
+                color = footerColor,
+                letterSpacing = 2.sp
+            )
+            Text(
+                text = "v1.0.666-STABLE", 
+                fontSize = 9.sp, 
+                color = DemonicRed
+            )
+        }
+    }
+}
+
+@Composable
+fun DrawerItem(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit = {}) {
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val containerColor = if (isDark) AbyssBlack else Color.White
+    val textColor = if (isDark) SoulWhite else AbyssBlack
+
+    Surface(
+        onClick = onClick,
+        color = containerColor, 
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp))
+            .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(12.dp))
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(icon, contentDescription = null, tint = HellRed, modifier = Modifier.size(24.dp))
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = label, 
+                color = textColor,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+    }
+}
+
+@Composable
+fun StyledTitle(
+    showDevil: Boolean = true,
+    showAntenna: Boolean = true,
+    fontSize: Int = 28, 
+    isCentered: Boolean = false,
+    modifier: Modifier = Modifier
+) {
     val titleShadow = Shadow(
-        color = Color.Black.copy(alpha = 0.8f), // Negro potente
-        offset = Offset(6f, 6f),               // Desplazamiento (X, Y)
-        blurRadius = 12f                       // Suavizado de la sombra
+        color = Color.Black.copy(alpha = 0.8f),
+        offset = Offset(6f, 6f),
+        blurRadius = 12f
     )
 
-    val demoniTitle = buildAnnotatedString {
-        // Parte "De" (Rojo)
+    val styledTitle = buildAnnotatedString {
+        if (showDevil) {
+            withStyle(style = SpanStyle(shadow = titleShadow)) {
+                append("😈 ")
+            }
+        }
         withStyle(style = SpanStyle(
-            color = DemonicRed,
+            color = HellRed,
             fontWeight = FontWeight.ExtraBold,
             shadow = titleShadow
         )) {
             append("De")
         }
-
-        // Parte "moni" (Amarillo)
         withStyle(style = SpanStyle(
             color = PentagramGold,
             fontWeight = FontWeight.ExtraBold,
@@ -147,300 +478,27 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
         )) {
             append("moni")
         }
-
-        // Parte "Wifi" (Blanco)
         withStyle(style = SpanStyle(
-            color = Color.White,
+            color = if (MaterialTheme.colorScheme.background.luminance() < 0.5f) Color.White else AbyssBlack,
             fontWeight = FontWeight.ExtraBold,
             shadow = titleShadow
         )) {
-            append("Wifi 📡")
-        }
-    }
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet(
-                drawerContainerColor = EvilBlack,
-                drawerShape = RoundedCornerShape(0.dp),
-                modifier = Modifier.width(280.dp)
-            ) {
-                Spacer(modifier = Modifier.height(38.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(14.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "😈",
-                        fontSize = 42.sp,
-                        style = androidx.compose.ui.text.TextStyle(shadow = titleShadow)
-                    )
-                    Text(
-                        text = demoniTitle,
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    // Línea difuminada del centro a los bordes
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(
-                                brush = androidx.compose.ui.graphics.Brush.horizontalGradient(
-                                    colors = listOf(Color.Transparent, DemonicRed, Color.Transparent)
-                                )
-                            )
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-                
-                NavigationDrawerItem(
-                    label = { Text("ESCANEAR DIMENSIÓN", color = Color.White) },
-                    selected = false,
-                    onClick = {
-                        scope.launch { 
-                            drawerState.close()
-                            wifiHelper.startScan()
-                            Toast.makeText(context, "Rastreando espectros...", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    icon = { Icon(Icons.Default.Refresh, contentDescription = null, tint = PentagramGold) },
-                    colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
-                )
-                NavigationDrawerItem(
-                    label = { Text("ATAQUE MASIVO", color = Color.White) },
-                    selected = false,
-                    onClick = { 
-                        scope.launch { 
-                            drawerState.close() 
-                            if (selectedSsids.isNotEmpty() && !isConnecting) {
-                                isConnecting = true
-                                for (ssid in selectedSsids) {
-                                    Toast.makeText(context, "Atacando red: $ssid...", Toast.LENGTH_SHORT).show()
-                                    val finalPass = passwordInput.ifEmpty { wifiHelper.getWifiPasswordRoot(ssid) }
-                                    wifiHelper.connectToWifi(ssid, finalPass, context)
-                                    delay(8000) 
-                                }
-                                isConnecting = false
-                                Toast.makeText(context, "Ritual de conexión finalizado", Toast.LENGTH_LONG).show()
-                            } else {
-                                Toast.makeText(context, "Marca primero las víctimas (redes)", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    },
-                    icon = { Icon(Icons.Default.Warning, contentDescription = null, tint = DemonicRed) },
-                    colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
-                )
-                NavigationDrawerItem(
-                    label = { Text("CONFIGURACIÓN", color = Color.White) },
-                    selected = false,
-                    onClick = { 
-                        scope.launch { 
-                            drawerState.close()
-                            Toast.makeText(context, "Ajustes del averno próximamente...", Toast.LENGTH_SHORT).show()
-                        } 
-                    },
-                    icon = { Icon(Icons.Default.Settings, contentDescription = null, tint = Color.Gray) },
-                    colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                
-                // Créditos abajo
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(
-                                brush = androidx.compose.ui.graphics.Brush.horizontalGradient(
-                                    colors = listOf(Color.Transparent, Color.DarkGray, Color.Transparent)
-                                )
-                            )
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "BY JAYLIZ & DEMONI-TEAM",
-                        color = Color.Gray,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 2.sp
-                    )
-                    Text(
-                        text = "v1.0.666-STABLE",
-                        color = DemonicRed,
-                        fontSize = 9.sp
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-        }
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize().imePadding(),
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(style = SpanStyle(shadow = titleShadow)) {
-                                    append("😈 ")
-                                }
-                                append(demoniTitle)
-                            },
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu", tint = DemonicRed)
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color(0xFF100607),
-                        scrolledContainerColor = Color.Unspecified,
-                        navigationIconContentColor = Color.Unspecified,
-                        titleContentColor = Color.Unspecified,
-                        actionIconContentColor = Color.Unspecified
-                    )
-                )
-            },
-            containerColor = EvilBlack,
-            bottomBar = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(EvilBlack)
-                        .padding(14.dp)
-                        .navigationBarsPadding()
-                        .border(1.dp, DemonicRed)
-                        .padding(8.dp)
-                ) {
-                    Text(
-                        text = if (selectedSsids.isNotEmpty()) "SELECCIONADAS: ${selectedSsids.size}" else "SELECCIONA LAS REDES OBJETIVO",
-                        color = PentagramGold,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    if (selectedSsids.isNotEmpty()) {
-                        Text(
-                            text = selectedSsids.joinToString(", ").take(50) + if(selectedSsids.joinToString(", ").length > 50) "..." else "",
-                            color = Color.Gray,
-                            fontSize = 10.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = passwordInput,
-                        onValueChange = { passwordInput = it },
-                        label = { Text("CLAVE DEL ABISMO (GENERAL)", color = Color.Gray) },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
-                            focusedBorderColor = DemonicRed,
-                            unfocusedBorderColor = Color.DarkGray,
-                            focusedLabelColor = DemonicRed,
-                            cursorColor = DemonicRed
-                        ),
-                        singleLine = true,
-                        enabled = !isConnecting
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = {
-                            if (selectedSsids.isNotEmpty() && !isConnecting) {
-                                isConnecting = true
-                                scope.launch {
-                                    for (ssid in selectedSsids) {
-                                        Toast.makeText(context, "Atacando red: $ssid...", Toast.LENGTH_SHORT).show()
-                                        
-                                        val finalPass = passwordInput.ifEmpty {
-                                            wifiHelper.getWifiPasswordRoot(ssid)
-                                        }
-
-                                        wifiHelper.connectToWifi(ssid, finalPass, context)
-                                        delay(8000) 
-                                    }
-                                    isConnecting = false
-                                    Toast.makeText(context, "Ritual de conexión finalizado", Toast.LENGTH_LONG).show()
-                                }
-                            } else if (!isConnecting) {
-                                Toast.makeText(context, "Marca primero las víctimas (redes)", Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = if(isConnecting) Color.Gray else DemonicRed),
-                        shape = RoundedCornerShape(0.dp),
-                        enabled = !isConnecting
-                    ) {
-                        Text(if(isConnecting) "PROCESANDO ALMAS..." else "INVOCAR ATAQUE SECUENCIAL", color = Color.White, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = 8.dp)
-                    .padding(bottom = 8.dp)
-                    .fillMaxSize()
-            ) {
-                Button(
-                    onClick = {
-                        if (hasPermission) {
-                            wifiHelper.startScan()
-                            Toast.makeText(context, "Rastreando espectros...", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF330000)),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(0.5.dp, DemonicRed.copy(alpha = 0.6f), RoundedCornerShape(4.dp)),
-                    shape = RoundedCornerShape(4.dp),
-                    contentPadding = PaddingValues(4.dp)
-                ) {
-                    Text("REFRESCAR DIMENSIÓN WIFI", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(EvilBlack)
-                        .border(1.dp, DemonicRed)
-                        .padding(4.dp)
-                ) {
-                    Text("SEL.", Modifier.weight(0.7f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
-                    Text("SSID", Modifier.weight(3f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                    Text("RSSI", Modifier.weight(0.8f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
-                    Text("SEGUR.", Modifier.weight(1.2f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
-                }
-
-                LazyColumn(
-                    modifier = Modifier.weight(1f).fillMaxWidth()
-                ) {
-                    items(networks) { network ->
-                        WifiRow(
-                            network = network,
-                            isSelected = selectedSsids.contains(network.ssid),
-                            onSelect = {
-                                selectedSsids = if (selectedSsids.contains(network.ssid)) {
-                                    selectedSsids - network.ssid
-                                } else {
-                                    selectedSsids + network.ssid
-                                }
-                            }
-                        )
-                    }
-                }
+            append("Wifi")
+            if (showAntenna) {
+                append(" 📡")
             }
         }
     }
+
+    Text(
+        text = styledTitle,
+        style = MaterialTheme.typography.headlineMedium.copy(
+            fontSize = fontSize.sp,
+            fontWeight = FontWeight.ExtraBold
+        ),
+        textAlign = if (isCentered) TextAlign.Center else TextAlign.Start,
+        modifier = modifier.then(if (isCentered) Modifier.fillMaxWidth() else Modifier)
+    )
 }
 
 @Composable
@@ -455,7 +513,7 @@ fun WifiRow(network: WifiNetwork, isSelected: Boolean, onSelect: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(if (isSelected) Color(0xFF220000) else Color.Transparent)
+            .background(if (isSelected) Color(0xFF220000).copy(alpha = if(MaterialTheme.colorScheme.background.luminance() < 0.5f) 1f else 0.1f) else Color.Transparent)
             .border(0.5.dp, DemonicRed)
             .clickable { onSelect() }
             .padding(vertical = 8.dp, horizontal = 4.dp),
@@ -472,8 +530,8 @@ fun WifiRow(network: WifiNetwork, isSelected: Boolean, onSelect: () -> Unit) {
             )
         )
         
-        Text(network.ssid, Modifier.weight(3f), color = Color.White, fontSize = 12.sp)
+        Text(network.ssid, Modifier.weight(3f), color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
         Text("${network.signalLevel}", Modifier.weight(0.8f), color = DemonicRed, fontSize = 12.sp, textAlign = TextAlign.Center)
-        Text(security, Modifier.weight(1.2f), color = Color.Gray, fontSize = 10.sp, textAlign = TextAlign.Center)
+        Text(security, Modifier.weight(1.2f), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), fontSize = 10.sp, textAlign = TextAlign.Center)
     }
 }
