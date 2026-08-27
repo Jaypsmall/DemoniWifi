@@ -408,57 +408,40 @@ section {
 ===================================================== */
 
 .screenshots {
-
   display: grid;
-
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
+  /* 1. Ocupa el 100% del ancho con una sola columna */
+  grid-template-columns: 1fr; 
   gap: 28px;
+  width: 100%;
 }
 
-
 .screenshot-card {
-
   background: var(--card);
-
   border: 1px solid var(--border);
-
   border-radius: 18px;
-
-  padding: 12px;
-
-  box-shadow:
-    0 15px 40px var(--shadow);
-
+  /* 2. Eliminamos el padding para que la imagen toque los bordes */
+  padding: 0; 
+  /* 3. Recorta la imagen para respetar el redondeado de la tarjeta */
+  overflow: hidden; 
+  box-shadow: 0 15px 40px var(--shadow);
   transition:
     background 0.35s ease,
     border 0.35s ease,
     transform 0.25s ease;
 }
 
-
 .screenshot-card:hover {
-
   transform: translateY(-5px);
 }
 
-
 .screenshot-card img {
-
   display: block;
-
+  /* 4. Forzamos el 100% de ancho y alto proporcional */
   width: 100%;
-
   height: auto;
-
-  border-radius: 11px;
-
-  transition:
-    opacity 0.2s ease;
+  border-radius: 0;
+  transition: opacity 0.2s ease;
 }
-
-
 /* =====================================================
    FEATURES
 ===================================================== */
