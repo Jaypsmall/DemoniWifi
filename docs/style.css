@@ -1,0 +1,665 @@
+/* =====================================================
+   DEMONIWIFI WEBSITE
+   Global Theme
+===================================================== */
+
+:root {
+
+  --bg: #070707;
+  --bg-secondary: #0d0d0d;
+
+  --card: #111111;
+  --card-hover: #181818;
+
+  --text: #f4f4f4;
+  --text-secondary: #a5a5a5;
+
+  --accent: #ff2020;
+  --accent-hover: #ff3b3b;
+
+  --yellow: #ffd600;
+
+  --border: #292929;
+
+  --shadow: rgba(0, 0, 0, 0.55);
+
+  --button-text: #ffffff;
+}
+
+
+/* =====================================================
+   LIGHT THEME
+===================================================== */
+
+body.light {
+
+  --bg: #f3f3f3;
+  --bg-secondary: #ffffff;
+
+  --card: #ffffff;
+  --card-hover: #f8f8f8;
+
+  --text: #111111;
+  --text-secondary: #626262;
+
+  --accent: #d41414;
+  --accent-hover: #ed1b1b;
+
+  --border: #ff3b3b;
+
+  --shadow: rgba(0, 0, 0, 0.12);
+
+  --button-text: #ffffff;
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+  box-sizing: border-box;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+body {
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  background: var(--bg);
+
+  color: var(--text);
+
+  line-height: 1.6;
+
+  transition:
+    background 0.35s ease,
+    color 0.35s ease;
+}
+
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+.container {
+
+  width: min(1100px, 92%);
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+/* =====================================================
+   THEME BUTTON
+===================================================== */
+
+nav {
+
+  position: fixed;
+
+  top: 18px;
+  right: 18px;
+
+  z-index: 1000;
+}
+
+
+.theme-button {
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+
+  border: 1px solid var(--border);
+
+  background: var(--card);
+
+  color: var(--text);
+
+  cursor: pointer;
+
+  font-size: 21px;
+
+  box-shadow:
+    0 8px 30px var(--shadow);
+
+  transition:
+    transform 0.2s ease,
+    background 0.35s ease,
+    color 0.35s ease;
+}
+
+
+.theme-button:hover {
+
+  transform: scale(1.08);
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+header {
+
+  min-height: 90vh;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  position: relative;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255, 0, 0, 0.13),
+      transparent 45%
+    );
+}
+
+
+.hero {
+  max-width: 650px;
+}
+
+
+.logo-icon {
+
+  font-size: 78px;
+
+  margin-bottom: 8px;
+
+  filter:
+    drop-shadow(
+      0 0 15px rgba(255, 0, 0, 0.35)
+    );
+}
+
+
+/* =====================================================
+   DEMONIWIFI LOGO
+===================================================== */
+
+.logo-title {
+
+  font-size: clamp(42px, 8vw, 78px);
+
+  font-weight: 800;
+
+  letter-spacing: -3px;
+
+  line-height: 1;
+
+  margin-bottom: 18px;
+}
+
+
+/* De = RED */
+
+.de {
+
+  color: #ff2020;
+
+  text-shadow:
+    0 0 18px rgba(255, 32, 32, 0.35);
+}
+
+
+/* moni = YELLOW */
+
+.moni {
+
+  color: #ffd600;
+
+  text-shadow:
+    0 0 18px rgba(255, 214, 0, 0.25);
+}
+
+
+/* Wifi = WHITE in dark mode */
+
+.wifi {
+
+  color: #ffffff;
+
+  text-shadow:
+    0 0 14px rgba(255, 255, 255, 0.08);
+
+  transition:
+    color 0.35s ease,
+    text-shadow 0.35s ease;
+}
+
+
+/* Wifi = BLACK in light mode */
+
+body.light .wifi {
+
+  color: #111111;
+
+  text-shadow: none;
+}
+
+
+/* =====================================================
+   EDITION TAG
+===================================================== */
+
+.edition {
+
+  display: inline-block;
+
+  color: var(--text);
+
+  font-weight: 800;
+
+  letter-spacing: 4px;
+
+  font-size: 14px;
+
+  margin-bottom: 25px;
+
+  transition:
+    color 0.35s ease;
+}
+
+
+/* =====================================================
+   HERO DESCRIPTION
+===================================================== */
+
+.hero p {
+
+  color: var(--text-secondary);
+
+  font-size: clamp(17px, 2.5vw, 21px);
+
+  max-width: 720px;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.buttons {
+
+  margin-top: 25px;
+
+  display: flex;
+
+  gap: 14px;
+
+  justify-content: center;
+
+  flex-wrap: wrap;
+}
+
+
+.button {
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 13px 25px;
+
+  border-radius: 9px;
+
+  font-weight: 800;
+
+  border: 1px solid var(--border);
+
+  transition:
+    transform 0.2s ease,
+    background 0.3s ease,
+    border 0.3s ease;
+}
+
+
+.button:hover {
+
+  transform: translateY(-2px);
+}
+
+
+.primary {
+
+  background: var(--accent);
+
+  color: var(--button-text);
+
+  border-color: var(--accent);
+}
+
+
+.primary:hover {
+
+  background: var(--accent-hover);
+}
+
+
+.secondary {
+
+  background: var(--card);
+
+  color: var(--text);
+}
+
+
+/* =====================================================
+   SECTIONS
+===================================================== */
+
+section {
+
+  padding: 30px 0;
+}
+
+
+.section-title {
+
+  text-align: center;
+
+  font-size: 34px;
+
+  margin-bottom: 35px;
+}
+
+
+.section-title span {
+
+  color: var(--accent);
+}
+
+
+/* =====================================================
+   SCREENSHOTS
+===================================================== */
+
+.screenshots {
+  display: grid;
+  /* 1. Ocupa el 100% del ancho con una sola columna */
+  grid-template-columns: 1fr; 
+  gap: 28px;
+  width: 100%;
+}
+
+.screenshot-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  /* 2. Eliminamos el padding para que la imagen toque los bordes */
+  padding: 0; 
+  /* 3. Recorta la imagen para respetar el redondeado de la tarjeta */
+  overflow: hidden; 
+  box-shadow: 0 15px 40px var(--shadow);
+  transition:
+    background 0.35s ease,
+    border 0.35s ease,
+    transform 0.25s ease;
+}
+
+.screenshot-card:hover {
+  transform: translateY(-5px);
+}
+
+.screenshot-card img {
+  display: block;
+  /* 4. Forzamos el 100% de ancho y alto proporcional */
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+  transition: opacity 0.2s ease;
+}
+/* =====================================================
+   FEATURES
+===================================================== */
+
+.features {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+.feature {
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+
+  border-radius: 15px;
+
+  padding: 25px;
+
+  transition:
+    background 0.35s ease,
+    border 0.35s ease,
+    transform 0.25s ease;
+}
+
+
+.feature:hover {
+
+  transform: translateY(-4px);
+}
+
+
+.feature-icon {
+
+  font-size: 28px;
+
+  margin-bottom: 10px;
+}
+
+
+.feature h3 {
+
+  margin-bottom: 8px;
+}
+
+
+.feature p {
+
+  color: var(--text-secondary);
+}
+
+
+/* =====================================================
+   REQUIREMENTS
+===================================================== */
+
+.requirements {
+
+  background: var(--bg-secondary);
+
+  border-top: 1px solid var(--border);
+
+  border-bottom: 1px solid var(--border);
+
+  transition:
+    background 0.35s ease,
+    border 0.35s ease;
+}
+
+
+.requirements-box {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 20px;
+}
+
+
+.requirement {
+
+  text-align: center;
+
+  padding: 25px;
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+
+  border-radius: 15px;
+
+  transition:
+    background 0.35s ease,
+    border 0.35s ease;
+}
+
+
+.requirement-icon {
+
+  font-size: 28px;
+}
+
+
+.requirement strong {
+
+  display: block;
+
+  margin-top: 8px;
+}
+
+
+.requirement p {
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer {
+
+  padding: 30px 0;
+
+  text-align: center;
+
+  color: var(--text-secondary);
+}
+
+
+.footer-logo {
+
+  font-size: 28px;
+
+  font-weight: 900;
+
+  margin-bottom: 8px;
+}
+
+
+.version {
+
+  color: var(--accent);
+
+  font-weight: 800;
+
+  margin-bottom: 12px;
+}
+
+
+footer p {
+
+  margin-top: 5px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .screenshots,
+  .features,
+  .requirements-box {
+
+    grid-template-columns: 1fr;
+  }
+
+
+  .logo-icon {
+
+    font-size: 60px;
+  }
+
+
+  .logo-title {
+
+    font-size: clamp(40px, 13vw, 62px);
+
+    letter-spacing: -2px;
+  }
+
+
+  section {
+
+    padding: 45px 0;
+  }
+
+
+  .section-title {
+
+    font-size: 29px;
+  }
+
+
+  nav {
+
+    top: 12px;
+    right: 12px;
+  }
+
+
+  .theme-button {
+
+    width: 44px;
+    height: 44px;
+  }
+
+} 
