@@ -17,7 +17,7 @@
   --accent: #ff2020;
   --accent-hover: #ff3b3b;
 
-  --yellow: #ffd600;
+  --yellow: #EEF900;
 
   --border: #292929;
 
@@ -33,7 +33,7 @@
 
 body.light {
 
-  --bg: #f3f3f3;
+  --bg: #D1D5D8;
   --bg-secondary: #ffffff;
 
   --card: #ffffff;
