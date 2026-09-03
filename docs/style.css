@@ -17,7 +17,7 @@
   --accent: #ff2020;
   --accent-hover: #ff3b3b;
 
-  --yellow: #EEF900;
+  --yellow: #f0ca00;
 
   --border: #292929;
 
@@ -235,7 +235,7 @@ header {
 
 .moni {
 
-  color: #EEF900;
+  color: #f0ca00;
 
   text-shadow:
     0 0 18px rgba(255, 214, 0, 0.33);
