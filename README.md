@@ -33,7 +33,7 @@ It is a mobile application featuring a themed interface designed for network tes
 
 ## 👥 Credits
 
-Developed by **Jayliz & Demoni-Team**
+Developed by **Jaypsmall & Demoni-Team**
 
 ---
 
