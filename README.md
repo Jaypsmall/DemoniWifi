@@ -31,6 +31,13 @@ It is a mobile application featuring a themed interface designed for network tes
 
 ---
 
+## 📄 License & Copyright
+Copyright © 2026. All rights reserved. The source code of this application is the private property of the developer. Unauthorized reproduction, distribution, or modification of this software is prohibited.
+
+Developed with 🧡 by an independent developer.
+
+---
+
 ## 👥 Credits
 
 Developed by **Jaypsmall & Demoni-Team**
