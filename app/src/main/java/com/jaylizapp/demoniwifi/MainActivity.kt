@@ -174,9 +174,9 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                 topBar = {
                     Column {
                         CenterAlignedTopAppBar(
-                            modifier = Modifier.height(64.dp),
+                            modifier = Modifier.height(100.dp),
                             title = {
-                                StyledTitle(fontSize = 20, showDevil = true, showAntenna = true)
+                                StyledTitle(fontSize = 32, showDevil = true, showAntenna = true)
                             },
                             navigationIcon = {
                                 IconButton(onClick = { scope.launch { drawerState.open() } }) {
@@ -192,7 +192,8 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(3.dp)
+                                .padding(3.dp)
+                                .height(1.dp)
                                 .background(
                                     brush = androidx.compose.ui.graphics.Brush.verticalGradient(
                                         colors = listOf(ShinySilver, Color.Gray)
@@ -207,10 +208,10 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surface)
-                            .padding(14.dp)
+                            .padding(12.dp)
                             .navigationBarsPadding()
                             .border(1.dp, DemonicRed)
-                            .padding(8.dp)
+                            .padding(6.dp)
                     ) {
                         Text(
                             text = if (selectedSsids.isNotEmpty()) "SELECCIONADAS: ${selectedSsids.size}" else "SELECCIONA LAS REDES OBJETIVO",
@@ -218,7 +219,7 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                         OutlinedTextField(
                             value = passwordInput,
                             onValueChange = { passwordInput = it },
@@ -235,7 +236,7 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                             singleLine = true,
                             enabled = !isConnecting
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                         Button(
                             onClick = {
                                 if (selectedSsids.isNotEmpty() && !isConnecting) {
