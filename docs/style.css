@@ -33,7 +33,7 @@
 
 body.light {
 
-  --bg: #D1D5D8;
+  --bg: #d1d5d8;
   --bg-secondary: #ffffff;
 
   --card: #ffffff;
@@ -58,6 +58,7 @@ body.light {
 ===================================================== */
 
 * {
+
   box-sizing: border-box;
 
   margin: 0;
@@ -66,7 +67,10 @@ body.light {
 
 
 html {
+
   scroll-behavior: smooth;
+
+  scroll-padding-top: 90px;
 }
 
 
@@ -94,8 +98,16 @@ body {
 
 
 a {
+
   color: inherit;
+
   text-decoration: none;
+}
+
+
+button {
+
+  font-family: inherit;
 }
 
 
@@ -109,36 +121,460 @@ a {
 
 
 /* =====================================================
-   THEME BUTTON
+   FIXED NAVBAR
 ===================================================== */
 
-nav {
+.navbar {
 
   position: fixed;
 
-  top: 18px;
-  right: 18px;
+  top: 0;
+  left: 0;
+
+  width: 100%;
 
   z-index: 1000;
+
+  background:
+    rgba(7, 7, 7, 0.88);
+
+  border-bottom:
+    1px solid var(--border);
+
+  backdrop-filter:
+    blur(14px);
+
+  -webkit-backdrop-filter:
+    blur(14px);
+
+  transition:
+    background 0.35s ease,
+    border-color 0.35s ease;
 }
 
 
-.theme-button {
+body.light .navbar {
 
-  width: 48px;
-  height: 48px;
+  background:
+    rgba(255, 255, 255, 0.88);
+}
 
-  border-radius: 50%;
 
-  border: 1px solid var(--border);
+.nav-container {
 
-  background: var(--card);
+  width: min(1200px, 94%);
 
-  color: var(--text);
+  min-height: 68px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+
+/* =====================================================
+   NAV BRAND
+===================================================== */
+
+.nav-brand {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  flex-shrink: 0;
+
+  font-weight: 900;
+}
+
+
+.nav-brand-icon {
+
+  font-size: 25px;
+
+  filter:
+    drop-shadow(
+      0 0 8px rgba(255, 32, 32, 0.45)
+    );
+}
+
+
+.nav-brand-text {
+
+  font-size: 20px;
+
+  letter-spacing: -0.8px;
+}
+
+
+/* =====================================================
+   NAV BRAND COLORS
+===================================================== */
+
+.nav-brand .de {
+
+  color: #ff2020;
+}
+
+
+.nav-brand .moni {
+
+  color: #f0ca00;
+}
+
+
+.nav-brand .wifi {
+
+  color: #ffffff;
+}
+
+
+body.light .nav-brand .wifi {
+
+  color: #111111;
+}
+
+
+/* =====================================================
+   NAV LINKS
+===================================================== */
+
+.nav-links {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 5px;
+}
+
+
+.nav-link {
+
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  min-height: 42px;
+
+  padding: 8px 12px;
+
+  border:
+    1px solid transparent;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.8px;
 
   cursor: pointer;
 
-  font-size: 21px;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.nav-link:hover {
+
+  color: var(--text);
+
+  background: var(--card);
+
+  border-color: var(--border);
+}
+
+
+.nav-link::after {
+
+  content: "";
+
+  position: absolute;
+
+  bottom: 2px;
+
+  left: 12px;
+  right: 12px;
+
+  height: 2px;
+
+  background: var(--accent);
+
+  transform:
+    scaleX(0);
+
+  transform-origin: center;
+
+  transition:
+    transform 0.2s ease;
+}
+
+
+.nav-link:hover::after {
+
+  transform:
+    scaleX(1);
+}
+
+
+/* =====================================================
+   DEMONI APPS MENU
+===================================================== */
+
+.apps-menu {
+
+  position: relative;
+}
+
+
+.apps-button {
+
+  appearance: none;
+
+  -webkit-appearance: none;
+}
+
+
+.dropdown-arrow {
+
+  font-size: 8px;
+
+  transition:
+    transform 0.25s ease;
+}
+
+
+.apps-button[aria-expanded="true"]
+.dropdown-arrow {
+
+  transform:
+    rotate(180deg);
+}
+
+
+/* =====================================================
+   DROPDOWN
+===================================================== */
+
+.apps-dropdown {
+
+  position: absolute;
+
+  top: calc(100% + 9px);
+
+  right: 0;
+
+  width: 245px;
+
+  padding: 7px;
+
+  background: var(--card);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 13px;
+
+  box-shadow:
+    0 18px 45px var(--shadow);
+
+  opacity: 0;
+
+  visibility: hidden;
+
+  transform:
+    translateY(-8px)
+    scale(0.97);
+
+  transform-origin:
+    top right;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.apps-dropdown.open {
+
+  opacity: 1;
+
+  visibility: visible;
+
+  transform:
+    translateY(0)
+    scale(1);
+}
+
+
+/* =====================================================
+   APP ITEMS
+===================================================== */
+
+.app-item {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 11px;
+
+  border:
+    1px solid transparent;
+
+  border-radius: 9px;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.app-item:hover {
+
+  background:
+    var(--card-hover);
+
+  border-color:
+    var(--border);
+
+  transform:
+    translateX(3px);
+}
+
+
+.app-icon {
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background:
+    var(--bg-secondary);
+
+  border:
+    1px solid var(--border);
+
+  font-size: 19px;
+}
+
+
+.app-info {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  line-height: 1.2;
+}
+
+
+.app-info strong {
+
+  color:
+    var(--text);
+
+  font-size: 14px;
+}
+
+
+.app-info small {
+
+  margin-top: 3px;
+
+  color:
+    var(--text-secondary);
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   CURRENT APP
+===================================================== */
+
+.current-app {
+
+  border-color:
+    rgba(255, 32, 32, 0.25);
+}
+
+
+.current-app .app-info strong {
+
+  color:
+    var(--accent);
+}
+
+
+/* =====================================================
+   THEME BUTTON
+===================================================== */
+
+.theme-button {
+
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  border:
+    1px solid var(--border);
+
+  background:
+    var(--card);
+
+  color:
+    var(--text);
+
+  cursor: pointer;
+
+  font-size: 18px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
 
   box-shadow:
     0 8px 30px var(--shadow);
@@ -146,13 +582,15 @@ nav {
   transition:
     transform 0.2s ease,
     background 0.35s ease,
-    color 0.35s ease;
+    color 0.35s ease,
+    border-color 0.35s ease;
 }
 
 
 .theme-button:hover {
 
-  transform: scale(1.08);
+  transform:
+    scale(1.08);
 }
 
 
@@ -164,9 +602,12 @@ header {
 
   min-height: 90vh;
 
+  padding-top: 68px;
+
   display: flex;
 
   align-items: center;
+
   justify-content: center;
 
   text-align: center;
@@ -185,6 +626,7 @@ header {
 
 
 .hero {
+
   max-width: 650px;
 }
 
@@ -208,7 +650,8 @@ header {
 
 .logo-title {
 
-  font-size: clamp(42px, 8vw, 78px);
+  font-size:
+    clamp(42px, 8vw, 78px);
 
   font-weight: 800;
 
@@ -222,7 +665,7 @@ header {
 
 /* De = RED */
 
-.de {
+.logo-title .de {
 
   color: #ff2020;
 
@@ -233,7 +676,7 @@ header {
 
 /* moni = YELLOW */
 
-.moni {
+.logo-title .moni {
 
   color: #f0ca00;
 
@@ -242,9 +685,9 @@ header {
 }
 
 
-/* Wifi = WHITE in dark mode */
+/* Wifi = WHITE */
 
-.wifi {
+.logo-title .wifi {
 
   color: #ffffff;
 
@@ -259,7 +702,7 @@ header {
 
 /* Wifi = BLACK in light mode */
 
-body.light .wifi {
+body.light .logo-title .wifi {
 
   color: #111111;
 
@@ -296,9 +739,11 @@ body.light .wifi {
 
 .hero p {
 
-  color: var(--text-secondary);
+  color:
+    var(--text-secondary);
 
-  font-size: clamp(17px, 2.5vw, 21px);
+  font-size:
+    clamp(17px, 2.5vw, 21px);
 
   max-width: 720px;
 
@@ -330,6 +775,7 @@ body.light .wifi {
   display: inline-flex;
 
   align-items: center;
+
   justify-content: center;
 
   padding: 13px 25px;
@@ -338,42 +784,50 @@ body.light .wifi {
 
   font-weight: 800;
 
-  border: 1px solid var(--border);
+  border:
+    1px solid var(--border);
 
   transition:
     transform 0.2s ease,
     background 0.3s ease,
-    border 0.3s ease;
+    border-color 0.3s ease;
 }
 
 
 .button:hover {
 
-  transform: translateY(-2px);
+  transform:
+    translateY(-2px);
 }
 
 
 .primary {
 
-  background: var(--accent);
+  background:
+    var(--accent);
 
-  color: var(--button-text);
+  color:
+    var(--button-text);
 
-  border-color: var(--accent);
+  border-color:
+    var(--accent);
 }
 
 
 .primary:hover {
 
-  background: var(--accent-hover);
+  background:
+    var(--accent-hover);
 }
 
 
 .secondary {
 
-  background: var(--card);
+  background:
+    var(--card);
 
-  color: var(--text);
+  color:
+    var(--text);
 }
 
 
@@ -399,7 +853,8 @@ section {
 
 .section-title span {
 
-  color: var(--accent);
+  color:
+    var(--accent);
 }
 
 
@@ -408,40 +863,63 @@ section {
 ===================================================== */
 
 .screenshots {
+
   display: grid;
-  /* 1. Ocupa el 100% del ancho con una sola columna */
-  grid-template-columns: 1fr; 
+
+  grid-template-columns: 1fr;
+
   gap: 28px;
+
   width: 100%;
 }
 
+
 .screenshot-card {
-  background: var(--card);
-  border: 1px solid var(--border);
+
+  background:
+    var(--card);
+
+  border:
+    1px solid var(--border);
+
   border-radius: 18px;
-  /* 2. Eliminamos el padding para que la imagen toque los bordes */
-  padding: 0; 
-  /* 3. Recorta la imagen para respetar el redondeado de la tarjeta */
-  overflow: hidden; 
-  box-shadow: 0 15px 40px var(--shadow);
+
+  padding: 0;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 15px 40px var(--shadow);
+
   transition:
     background 0.35s ease,
-    border 0.35s ease,
+    border-color 0.35s ease,
     transform 0.25s ease;
 }
 
+
 .screenshot-card:hover {
-  transform: translateY(-5px);
+
+  transform:
+    translateY(-5px);
 }
 
+
 .screenshot-card img {
+
   display: block;
-  /* 4. Forzamos el 100% de ancho y alto proporcional */
+
   width: 100%;
+
   height: auto;
+
   border-radius: 0;
-  transition: opacity 0.2s ease;
+
+  transition:
+    opacity 0.2s ease;
 }
+
+
 /* =====================================================
    FEATURES
 ===================================================== */
@@ -459,9 +937,11 @@ section {
 
 .feature {
 
-  background: var(--card);
+  background:
+    var(--card);
 
-  border: 1px solid var(--border);
+  border:
+    1px solid var(--border);
 
   border-radius: 15px;
 
@@ -469,14 +949,15 @@ section {
 
   transition:
     background 0.35s ease,
-    border 0.35s ease,
+    border-color 0.35s ease,
     transform 0.25s ease;
 }
 
 
 .feature:hover {
 
-  transform: translateY(-4px);
+  transform:
+    translateY(-4px);
 }
 
 
@@ -496,7 +977,8 @@ section {
 
 .feature p {
 
-  color: var(--text-secondary);
+  color:
+    var(--text-secondary);
 }
 
 
@@ -506,15 +988,18 @@ section {
 
 .requirements {
 
-  background: var(--bg-secondary);
+  background:
+    var(--bg-secondary);
 
-  border-top: 1px solid var(--border);
+  border-top:
+    1px solid var(--border);
 
-  border-bottom: 1px solid var(--border);
+  border-bottom:
+    1px solid var(--border);
 
   transition:
     background 0.35s ease,
-    border 0.35s ease;
+    border-color 0.35s ease;
 }
 
 
@@ -523,7 +1008,7 @@ section {
   display: grid;
 
   grid-template-columns:
-    repeat(3, 1fr);
+    repeat(3, minmax(0, 1fr));
 
   gap: 20px;
 }
@@ -535,15 +1020,17 @@ section {
 
   padding: 25px;
 
-  background: var(--card);
+  background:
+    var(--card);
 
-  border: 1px solid var(--border);
+  border:
+    1px solid var(--border);
 
   border-radius: 15px;
 
   transition:
     background 0.35s ease,
-    border 0.35s ease;
+    border-color 0.35s ease;
 }
 
 
@@ -563,9 +1050,62 @@ section {
 
 .requirement p {
 
-  color: var(--text-secondary);
+  color:
+    var(--text-secondary);
 
   font-size: 14px;
+}
+
+
+/* =====================================================
+   NOTICE
+===================================================== */
+
+.notice {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  padding: 22px 25px;
+
+  background:
+    var(--card);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 12px 35px var(--shadow);
+
+  transition:
+    background 0.35s ease,
+    border-color 0.35s ease;
+}
+
+
+.notice-icon {
+
+  flex-shrink: 0;
+
+  font-size: 32px;
+}
+
+
+.notice h3 {
+
+  margin-bottom: 5px;
+}
+
+
+.notice p {
+
+  color:
+    var(--text-secondary);
 }
 
 
@@ -579,7 +1119,8 @@ footer {
 
   text-align: center;
 
-  color: var(--text-secondary);
+  color:
+    var(--text-secondary);
 }
 
 
@@ -593,9 +1134,38 @@ footer {
 }
 
 
+.footer-logo .de {
+
+  color:
+    #ff2020;
+}
+
+
+.footer-logo .moni {
+
+  color:
+    #f0ca00;
+}
+
+
+.footer-logo .wifi {
+
+  color:
+    #ffffff;
+}
+
+
+body.light .footer-logo .wifi {
+
+  color:
+    #111111;
+}
+
+
 .version {
 
-  color: var(--accent);
+  color:
+    var(--accent);
 
   font-weight: 800;
 
@@ -610,10 +1180,66 @@ footer p {
 
 
 /* =====================================================
-   MOBILE
+   TABLET / MOBILE
 ===================================================== */
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
+
+  .nav-container {
+
+    min-height: 62px;
+
+    width: 94%;
+  }
+
+
+  .nav-brand-text {
+
+    display: none;
+  }
+
+
+  .nav-links {
+
+    gap: 2px;
+  }
+
+
+  .nav-link {
+
+    min-height: 38px;
+
+    padding:
+      7px 8px;
+
+    font-size: 9px;
+
+    letter-spacing: 0.4px;
+  }
+
+
+  .theme-button {
+
+    width: 38px;
+    height: 38px;
+
+    font-size: 16px;
+  }
+
+
+  .apps-dropdown {
+
+    right: 0;
+
+    width: 230px;
+  }
+
+
+  header {
+
+    padding-top: 62px;
+  }
+
 
   .screenshots,
   .features,
@@ -631,7 +1257,8 @@ footer p {
 
   .logo-title {
 
-    font-size: clamp(40px, 13vw, 62px);
+    font-size:
+      clamp(40px, 13vw, 62px);
 
     letter-spacing: -2px;
   }
@@ -649,17 +1276,99 @@ footer p {
   }
 
 
-  nav {
+  .notice {
 
-    top: 12px;
-    right: 12px;
+    align-items: flex-start;
+
+    padding: 20px;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 560px) {
+
+  .nav-container {
+
+    gap: 5px;
+  }
+
+
+  .nav-brand {
+
+    display: none;
+  }
+
+
+  .nav-links {
+
+    width: 100%;
+
+    justify-content: center;
+  }
+
+
+  .nav-link {
+
+    padding:
+      6px 5px;
+
+    font-size: 8px;
+  }
+
+
+  .apps-button {
+
+    padding-left: 7px;
+    padding-right: 7px;
   }
 
 
   .theme-button {
 
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
   }
 
-} 
+
+  .apps-dropdown {
+
+    position: fixed;
+
+    top: 57px;
+
+    right: 8px;
+
+    width:
+      min(250px, calc(100vw - 16px));
+  }
+
+
+  .buttons {
+
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+
+  .button {
+
+    width: 100%;
+  }
+
+
+  .notice {
+
+    flex-direction: column;
+
+    text-align: center;
+
+    align-items: center;
+  }
+
+}
