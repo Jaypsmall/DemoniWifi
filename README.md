@@ -12,13 +12,16 @@
 
 ---
 
-## 🚀 Key Features
+## 🚀 Características principales
 
-* **Network Scanning (Wi-Fi Dimension):** Displays available Wi-Fi networks in real-time, specifying the SSID, signal strength (RSSI), and security protocol (WPA2, OPEN, etc.).
-* **Mass / Sequential Attack:** Allows you to select multiple target networks to perform chained authentication tests.
-* **Batch Key Injection:** Ability to test universal credentials or test parameters sequentially on selected access points.
-* **Custom Interface:** Themed visual style with real-time status indicators (*Processing souls...*, *Connecting classic-style...*, *Connection ritual complete*).
+* **Escaneo de red (Wi-Fi Dimension):** Muestra las redes Wi-Fi disponibles en tiempo real, especificando el SSID, la intensidad de la señal (RSSI) y el protocolo de seguridad (WPA2, OPEN, etc.).
 
+* **Ataque masivo/secuencial:** Permite seleccionar varias redes objetivo para realizar pruebas de autenticación encadenadas.
+
+* **Inyección de claves por lotes:** Permite probar credenciales universales o parámetros de prueba secuencialmente en puntos de acceso seleccionados.
+
+* **Interfaz personalizada:** Estilo visual con temas e indicadores de estado en tiempo real (Procesando almas...*, *Conectando estilo clásico...*, *Ritual de conexión completado*).
+ 
 ---
 
 ## 🛠️ Usage Instructions
