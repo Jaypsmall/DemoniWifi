@@ -1,6 +1,6 @@
 # 😈 DemoniWifi 📡   ![Android](https://img.shields.io/badge/Android-181717?style=flat&logo=android&logoColor=yellow) ![Kotlin](https://img.shields.io/badge/kotlin-181717?style=flat&logo=kotlin&logoColor=yellow) 
 
-**😈 DemoniWifi** is a mobile application featuring a themed interface designed for network testing and Wi-Fi connection audits. The tool allows you to manage scans of nearby networks and execute test sequences using predefined credentials.
+**😈 DemoniWifi** Es una aplicación móvil con una interfaz temática diseñada para pruebas de red y auditorías de conexión Wi-Fi. La herramienta permite gestionar escaneos de redes cercanas y ejecutar secuencias de prueba con credenciales predefinidas.
 
 * **https://github.com/Jaypsmall/DemoniWifi/releases/download/android/DemoniWifi_v1.0.5.apk**
 
