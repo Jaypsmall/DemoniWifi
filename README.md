@@ -24,16 +24,20 @@
  
 ---
 
-## 🛠️ Usage Instructions
+## 🛠️ Instrucciones de uso 
 
-1. **Scan Dimension:** Tap the top button to refresh the list of detected networks.
-2. **Select Targets:** Check the box next to the networks you wish to audit.
-3. **Enter Credential:** Input the test key into the *Abyss Key (General)* field.
-4. **Execute:** Press **INVOKE SEQUENTIAL ATTACK** to start the test sequence on the selected targets.
+1. **Dimensiones de escaneo:** Toque el botón superior para actualizar la lista de redes detectadas. 
+
+2. **Seleccionar objetivos:** Marque la casilla junto a las redes que desea auditar. 
+
+3. **Ingresar credenciales:** Ingrese la clave de prueba en el campo *Clave de Abyss (General)*. 
+
+4. **Ejecutar:** Presione **INVOCAR ATAQUE SECUENCIAL** para iniciar la secuencia de prueba en los objetivos seleccionados.
 
 ---
 
 ## 📄 License & Copyright
+
 Copyright © 2026. All rights reserved. The source code of this application is the private property of the developer. Unauthorized reproduction, distribution, or modification of this software is prohibited.
 
 Developed with 🧡 by an independent developer.
