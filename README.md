@@ -3,7 +3,7 @@
 **😈 DemoniWifi** Es una aplicación móvil con una interfaz temática diseñada para pruebas de red y auditorías de conexión Wi-Fi. La herramienta permite gestionar escaneos de redes cercanas y ejecutar secuencias de prueba con credenciales predefinidas.
 
 <a href="https://github.com/Jaypsmall/DemoniWifi/releases/download/android/DemoniWifi_v1.0.5.apk">
-   <img src="https://img.shields.io/badge/DOWNLOAD_v1.0.5_APK-181717?style=flat&logo=android&logoColor=FF8B3D" alt="Download Android Release">
+  <img src="https://img.shields.io/badge/DOWNLOAD_DEMONIWIFI_v1.0.5_APK-181717?style=flat&logo=android&logoColor=FF8B3D" alt="Download Android Release">
  </a>
 
 ---
@@ -46,10 +46,10 @@ Desarrollado con 🧡 por un desarrollador independiente.
 
 ---
 
-## 👥 Credits
+## 👥 Creditos
 
-Developed by **Jaypsmall & Demoni-Team**
+Desarrollado por **Jaypsmall y Demoni-Team**
 
 ---
 
-> **Notice:** This tool has been designed exclusively for educational purposes and for testing in private or authorized environments.
+> **Aviso:** Esta herramienta ha sido diseñada exclusivamente con fines educativos y para realizar pruebas en entornos privados o autorizados.
