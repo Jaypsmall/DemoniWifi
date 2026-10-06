@@ -38,11 +38,11 @@
 
 ---
 
-## 📄 License & Copyright
+## 📄 Licencia & Copyright
 
-Copyright © 2026. All rights reserved. The source code of this application is the private property of the developer. Unauthorized reproduction, distribution, or modification of this software is prohibited.
+Copyright © 2026. Todos los derechos reservados. El código fuente de esta aplicación es propiedad privada del desarrollador. Se prohíbe la reproducción, distribución o modificación no autorizada de este software. 
 
-Developed with 🧡 by an independent developer.
+Desarrollado con 🧡 por un desarrollador independiente. 
 
 ---
 
