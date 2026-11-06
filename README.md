@@ -42,7 +42,7 @@
 
 Copyright © 2026. Todos los derechos reservados. El código fuente de esta aplicación es propiedad privada del desarrollador. Se prohíbe la reproducción, distribución o modificación no autorizada de este software. 
 
-Desarrollado con 🧡 por un desarrollador independiente. 
+***Desarrollado con 💜 por un desarrollador independiente.***
 
 ---
 
