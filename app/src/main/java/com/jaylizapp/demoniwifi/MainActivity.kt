@@ -22,32 +22,34 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import com.jaylizapp.demoniwifi.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.draw.shadow
+import androidx.compose.foundation.BorderStroke
 
 class MainActivity : ComponentActivity() {
     private lateinit var wifiHelper: WifiHelper
@@ -83,7 +85,7 @@ class MainActivity : ComponentActivity() {
         try {
             unregisterReceiver(wifiScanReceiver)
         } catch (e: Exception) {
-            // Ya estaba desregistrado
+            // Already unregistered
         }
     }
 }
@@ -93,13 +95,18 @@ class MainActivity : ComponentActivity() {
 fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<WifiNetwork>>) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val clipboardManager = LocalClipboardManager.current
     val networks by networksState
     
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     
-    // El modo oscuro persiste al girar o salir
     var isDarkTheme by rememberSaveable { mutableStateOf(true) }
     var isEnglish by rememberSaveable { mutableStateOf(false) }
+
+    // New interactive dialog states
+    var selectedNetworkForDetails by remember { mutableStateOf<WifiNetwork?>(null) }
+    var showChannelAnalyzer by remember { mutableStateOf(false) }
+    var showHelpDialog by remember { mutableStateOf(false) }
 
     DemoniWifiTheme(darkTheme = isDarkTheme) {
         var selectedSsids by remember { mutableStateOf(setOf<String>()) }
@@ -146,7 +153,7 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                             scope.launch {
                                 drawerState.close()
                                 wifiHelper.startScan()
-                                Toast.makeText(context, "Rastreando...", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, if (isEnglish) "Scanning Dimension..." else "Rastreando Dimensión...", Toast.LENGTH_SHORT).show()
                             }
                         },
                         onAtaqueClick = {
@@ -155,14 +162,40 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                                 if (selectedSsids.isNotEmpty() && !isConnecting) {
                                     isConnecting = true
                                     for (ssid in selectedSsids) {
-                                        Toast.makeText(context, "Atacando $ssid...", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, if (isEnglish) "Attacking $ssid..." else "Atacando $ssid...", Toast.LENGTH_SHORT).show()
                                         val finalPass = passwordInput.ifEmpty { wifiHelper.getWifiPasswordRoot(ssid) }
                                         wifiHelper.connectToWifi(ssid, finalPass, context)
                                         delay(8000)
                                     }
                                     isConnecting = false
-                                    Toast.makeText(context, "Finalizado", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, if (isEnglish) "Ritual Complete" else "Ritual Finalizado", Toast.LENGTH_LONG).show()
                                 }
+                            }
+                        },
+                        onChannelAnalyzerClick = {
+                            scope.launch {
+                                drawerState.close()
+                                showChannelAnalyzer = true
+                            }
+                        },
+                        onExportClick = {
+                            scope.launch {
+                                drawerState.close()
+                                val report = buildString {
+                                    append("😈 DEMONIWIFI - GRIMOIRE REPORT 📡\n")
+                                    append("==================================\n")
+                                    networks.forEach { net ->
+                                        append("SSID: ${net.ssid} | BSSID: ${net.bssid} | RSSI: ${net.signalLevel}dBm | Ch: ${net.channel} | Sec: ${net.capabilities}\n")
+                                    }
+                                }
+                                clipboardManager.setText(androidx.compose.ui.text.AnnotatedString(report))
+                                Toast.makeText(context, if (isEnglish) "Grimoire copied to clipboard!" else "¡Grimorio copiado al portapapeles!", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        onHelpClick = {
+                            scope.launch {
+                                drawerState.close()
+                                showHelpDialog = true
                             }
                         }
                     )
@@ -188,7 +221,6 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                                 titleContentColor = Color.Unspecified
                             )
                         )
-                        // LÍNEA DE PLATA (3.dp)
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -214,7 +246,10 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                             .padding(6.dp)
                     ) {
                         Text(
-                            text = if (selectedSsids.isNotEmpty()) "SELECCIONADAS: ${selectedSsids.size}" else "SELECCIONA LAS REDES OBJETIVO",
+                            text = if (selectedSsids.isNotEmpty()) 
+                                (if (isEnglish) "SELECTED: ${selectedSsids.size}" else "SELECCIONADAS: ${selectedSsids.size}") 
+                            else 
+                                (if (isEnglish) "SELECT TARGET NETWORKS" else "SELECCIONA LAS REDES OBJETIVO"),
                             color = PentagramGold,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
@@ -223,7 +258,7 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                         OutlinedTextField(
                             value = passwordInput,
                             onValueChange = { passwordInput = it },
-                            label = { Text("CLAVE DEL ABISMO", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) },
+                            label = { Text(if (isEnglish) "ABYSS KEY (GENERAL)" else "CLAVE DEL ABISMO", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = MaterialTheme.colorScheme.onSurface,
@@ -256,7 +291,14 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                             shape = RoundedCornerShape(0.dp),
                             enabled = !isConnecting
                         ) {
-                            Text(if(isConnecting) "PROCESANDO..." else "ATAQUE SECUENCIAL", color = Color.White, fontWeight = FontWeight.Bold)
+                            Text(
+                                if(isConnecting) 
+                                    (if(isEnglish) "PROCESSING SOULS..." else "PROCESANDO...") 
+                                else 
+                                    (if(isEnglish) "INVOKE SEQUENTIAL ATTACK" else "ATAQUE SECUENCIAL"), 
+                                color = Color.White, 
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
@@ -279,7 +321,12 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                         shape = RoundedCornerShape(4.dp),
                         contentPadding = PaddingValues(4.dp)
                     ) {
-                        Text("REFRESCAR DIMENSIÓN WIFI", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                        Text(
+                            if (isEnglish) "REFRESH WIFI DIMENSION" else "REFRESCAR DIMENSIÓN WIFI", 
+                            color = Color.White, 
+                            fontSize = 12.sp, 
+                            fontWeight = FontWeight.Medium
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -294,7 +341,7 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                         Text("SEL.", Modifier.weight(0.7f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
                         Text("SSID", Modifier.weight(3f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                         Text("RSSI", Modifier.weight(0.8f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
-                        Text("SEGUR.", Modifier.weight(1.2f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
+                        Text(if (isEnglish) "SEC." else "SEGUR.", Modifier.weight(1.2f), color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
                     }
 
                     LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
@@ -304,6 +351,9 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                                 isSelected = selectedSsids.contains(network.ssid),
                                 onSelect = {
                                     selectedSsids = if (selectedSsids.contains(network.ssid)) selectedSsids - network.ssid else selectedSsids + network.ssid
+                                },
+                                onDetailClick = {
+                                    selectedNetworkForDetails = network
                                 }
                             )
                         }
@@ -311,7 +361,251 @@ fun DemonicWifiApp(wifiHelper: WifiHelper, networksState: MutableState<List<Wifi
                 }
             }
         }
+
+        // --- NETWORK DETAILS & PING TEST DIALOG ---
+        selectedNetworkForDetails?.let { net ->
+            NetworkDetailDialog(
+                network = net,
+                isEnglish = isEnglish,
+                wifiHelper = wifiHelper,
+                onDismiss = { selectedNetworkForDetails = null }
+            )
+        }
+
+        // --- CHANNEL ANALYZER DIALOG ---
+        if (showChannelAnalyzer) {
+            ChannelAnalyzerDialog(
+                networks = networks,
+                isEnglish = isEnglish,
+                onDismiss = { showChannelAnalyzer = false }
+            )
+        }
+
+        // --- HELP DIALOG ---
+        if (showHelpDialog) {
+            HelpDialog(
+                isEnglish = isEnglish,
+                onDismiss = { showHelpDialog = false }
+            )
+        }
     }
+}
+
+@Composable
+fun NetworkDetailDialog(network: WifiNetwork, isEnglish: Boolean, wifiHelper: WifiHelper, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var pingOutput by remember { mutableStateOf<String?>(null) }
+    var isPingLoading by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.background,
+        shape = RoundedCornerShape(16.dp),
+        title = {
+            Text(
+                text = "😈 ${network.ssid}",
+                color = DemonicRed,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                DetailItem(if (isEnglish) "BSSID:" else "BSSID:", network.bssid)
+                DetailItem(if (isEnglish) "Signal (RSSI):" else "Señal (RSSI):", "${network.signalLevel} dBm")
+                DetailItem(if (isEnglish) "Frequency:" else "Frecuencia:", "${network.frequency} MHz")
+                DetailItem(if (isEnglish) "Channel:" else "Canal:", "${network.channel}")
+                DetailItem(if (isEnglish) "Capabilities:" else "Capacidades:", network.capabilities)
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                if (pingOutput != null) {
+                    Text(
+                        text = if (isEnglish) "Gateway Ping Result:" else "Resultado Ping Gateway:",
+                        color = PentagramGold,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.Black.copy(alpha = 0.8f))
+                            .border(1.dp, DemonicRed)
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = pingOutput!!,
+                            color = Color.Green,
+                            fontSize = 11.sp,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Button(
+                    onClick = {
+                        isPingLoading = true
+                        scope.launch {
+                            pingOutput = wifiHelper.pingGateway(context)
+                            isPingLoading = false
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF330000)),
+                    border = BorderStroke(1.dp, DemonicRed)
+                ) {
+                    Text(
+                        if (isPingLoading) (if (isEnglish) "Pinging..." else "Haciendo Ping...") 
+                        else (if (isEnglish) "Abyss Ping" else "Ping al Abismo"),
+                        color = Color.White,
+                        fontSize = 12.sp
+                    )
+                }
+
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(containerColor = DemonicRed)
+                ) {
+                    Text(if (isEnglish) "Close" else "Cerrar", color = Color.White)
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun DetailItem(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label, color = PentagramGold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+        Text(value, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+    }
+}
+
+@Composable
+fun ChannelAnalyzerDialog(networks: List<WifiNetwork>, isEnglish: Boolean, onDismiss: () -> Unit) {
+    val channelCounts = networks.groupingBy { it.channel }.eachCount().toSortedMap()
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.background,
+        shape = RoundedCornerShape(16.dp),
+        title = {
+            Text(
+                text = if (isEnglish) "📡 Channel Congestion Analyzer" else "📡 Analizador de Canales",
+                color = PentagramGold,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 300.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = if (isEnglish) "Detected channel distribution in current dimension:" else "Distribución de canales detectados en la dimensión actual:",
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    fontSize = 12.sp
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                if (channelCounts.isEmpty()) {
+                    Text(
+                        text = if (isEnglish) "No networks scanned yet." else "Aún no hay redes escaneadas.",
+                        color = DemonicRed,
+                        fontSize = 14.sp
+                    )
+                } else {
+                    channelCounts.forEach { (channel, count) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Channel / Canal $channel", color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+                            Text("$count ${if (isEnglish) "networks" else "redes"}", color = DemonicRed, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = DemonicRed)
+            ) {
+                Text(if (isEnglish) "Close" else "Cerrar", color = Color.White)
+            }
+        }
+    )
+}
+
+@Composable
+fun HelpDialog(isEnglish: Boolean, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.background,
+        shape = RoundedCornerShape(16.dp),
+        title = {
+            Text(
+                text = if (isEnglish) "😈 DemoniWifi Help" else "😈 Ayuda de DemoniWifi",
+                color = DemonicRed,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                val helpText = if (isEnglish) {
+                    "1. Scan Dimension: Refresh nearby Wi-Fi networks.\n\n" +
+                    "2. Select Targets: Check boxes of networks you wish to audit.\n\n" +
+                    "3. Abyss Key: Input a universal password or leave blank for root extraction.\n\n" +
+                    "4. Sequential Attack: Executes automated connection tests on selected targets.\n\n" +
+                    "5. Channel Analyzer: Inspect wireless congestion in your current location.\n\n" +
+                    "6. Grimoire Export: Copy full scan report to clipboard."
+                } else {
+                    "1. Escanear Dimensión: Refresca las redes Wi-Fi cercanas.\n\n" +
+                    "2. Seleccionar Objetivos: Marca las casillas de las redes a auditar.\n\n" +
+                    "3. Clave del Abismo: Introduce una contraseña universal o déjala en blanco para extracción root.\n\n" +
+                    "4. Ataque Secuencial: Ejecuta pruebas de conexión automatizadas en los objetivos seleccionados.\n\n" +
+                    "5. Analizador de Canales: Inspecciona la congestión inalámbrica en tu ubicación.\n\n" +
+                    "6. Exportar Grimorio: Copia el informe completo de red al portapapeles."
+                }
+                Text(
+                    text = helpText,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 13.sp
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = DemonicRed)
+            ) {
+                Text(if (isEnglish) "Got it" else "Entendido", color = Color.White)
+            }
+        }
+    )
 }
 
 @Composable
@@ -321,7 +615,10 @@ fun DrawerContent(
     onModeToggle: () -> Unit,
     onLanguageToggle: () -> Unit,
     onScanClick: () -> Unit,
-    onAtaqueClick: () -> Unit
+    onAtaqueClick: () -> Unit,
+    onChannelAnalyzerClick: () -> Unit,
+    onExportClick: () -> Unit,
+    onHelpClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -332,7 +629,6 @@ fun DrawerContent(
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // --- TÍTULO PERSONALIZADO: DemoniWifi ---
         Text(
             text = "😈",
             fontSize = 42.sp,
@@ -350,7 +646,6 @@ fun DrawerContent(
             showAntenna = true
         )
         
-        // Línea roja difuminada (Centro a extremos)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -362,26 +657,28 @@ fun DrawerContent(
                 )
         )
         
-        Spacer(modifier = Modifier.height(32.dp)) // Padding de la cabecera a los botones
+        Spacer(modifier = Modifier.height(24.dp))
         
-        // --- BOTONES DEL MENÚ ---
-        DrawerItem(label = if (isEnglish) "Scan" else "Escanear", icon = Icons.Default.Refresh, onClick = onScanClick)
-        Spacer(modifier = Modifier.height(16.dp))
-        DrawerItem(label = if (isEnglish) "Massive Attack" else "Ataque Masivo", icon = Icons.Default.Warning, onClick = onAtaqueClick)
-        Spacer(modifier = Modifier.height(16.dp))
+        DrawerItem(label = if (isEnglish) "Scan Dimension" else "Escanear Dimensión", icon = Icons.Default.Refresh, onClick = onScanClick)
+        Spacer(modifier = Modifier.height(12.dp))
+        DrawerItem(label = if (isEnglish) "Sequential Attack" else "Ataque Secuencial", icon = Icons.Default.Warning, onClick = onAtaqueClick)
+        Spacer(modifier = Modifier.height(12.dp))
+        DrawerItem(label = if (isEnglish) "Channel Analyzer" else "Analizador de Canales", icon = Icons.Default.NetworkWifi, onClick = onChannelAnalyzerClick)
+        Spacer(modifier = Modifier.height(12.dp))
+        DrawerItem(label = if (isEnglish) "Export Grimoire" else "Exportar Grimorio", icon = Icons.Default.Share, onClick = onExportClick)
+        Spacer(modifier = Modifier.height(12.dp))
         DrawerItem(
             label = if (isDarkMode) (if (isEnglish) "Soul Mode" else "Modo Alma") else (if (isEnglish) "Abyss Mode" else "Modo Abismo"), 
             icon = if (isDarkMode) Icons.Default.WbSunny else Icons.Default.NightsStay, 
             onClick = onModeToggle
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        DrawerItem(label = if (isEnglish) "Languages" else "Idiomas", icon = Icons.Default.Language, onClick = onLanguageToggle)
-        Spacer(modifier = Modifier.height(16.dp))
-        DrawerItem(label = if (isEnglish) "Help" else "Ayuda", icon = Icons.AutoMirrored.Filled.Help)
+        Spacer(modifier = Modifier.height(12.dp))
+        DrawerItem(label = if (isEnglish) "Language: English" else "Idioma: Español", icon = Icons.Default.Language, onClick = onLanguageToggle)
+        Spacer(modifier = Modifier.height(12.dp))
+        DrawerItem(label = if (isEnglish) "Help & Ritual" else "Ayuda del Ritual", icon = Icons.AutoMirrored.Filled.Help, onClick = onHelpClick)
         
         Spacer(modifier = Modifier.weight(1f))
         
-        // --- CRÉDITOS FINALES ---
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp), 
             horizontalAlignment = Alignment.CenterHorizontally
@@ -426,7 +723,7 @@ fun DrawerItem(label: String, icon: androidx.compose.ui.graphics.vector.ImageVec
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(52.dp)
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp))
             .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(12.dp))
     ) {
@@ -434,12 +731,12 @@ fun DrawerItem(label: String, icon: androidx.compose.ui.graphics.vector.ImageVec
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, contentDescription = null, tint = HellRed, modifier = Modifier.size(24.dp))
+            Icon(icon, contentDescription = null, tint = HellRed, modifier = Modifier.size(22.dp))
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = label, 
                 color = textColor,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 14.sp)
             )
         }
     }
@@ -503,7 +800,7 @@ fun StyledTitle(
 }
 
 @Composable
-fun WifiRow(network: WifiNetwork, isSelected: Boolean, onSelect: () -> Unit) {
+fun WifiRow(network: WifiNetwork, isSelected: Boolean, onSelect: () -> Unit, onDetailClick: () -> Unit) {
     val security = when {
         network.capabilities.contains("WPA3") -> "WPA3"
         network.capabilities.contains("WPA2") -> "WPA2"
@@ -516,7 +813,7 @@ fun WifiRow(network: WifiNetwork, isSelected: Boolean, onSelect: () -> Unit) {
             .fillMaxWidth()
             .background(if (isSelected) Color(0xFF220000).copy(alpha = if(MaterialTheme.colorScheme.background.luminance() < 0.5f) 1f else 0.1f) else Color.Transparent)
             .border(0.5.dp, DemonicRed)
-            .clickable { onSelect() }
+            .clickable { onDetailClick() }
             .padding(vertical = 8.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

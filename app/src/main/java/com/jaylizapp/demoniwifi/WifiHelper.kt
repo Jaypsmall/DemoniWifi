@@ -22,7 +22,15 @@ data class WifiNetwork(
     val signalLevel: Int,
     val capabilities: String,
     val frequency: Int
-)
+) {
+    val channel: Int
+        get() = when {
+            frequency in 2412..2472 -> (frequency - 2412) / 5 + 1
+            frequency == 2484 -> 14
+            frequency in 5170..5825 -> (frequency - 5170) / 5 + 34
+            else -> 0
+        }
+}
 
 @Suppress("DEPRECATION")
 class WifiHelper(context: Context) {
@@ -47,6 +55,25 @@ class WifiHelper(context: Context) {
     @Suppress("DEPRECATION")
     fun startScan() {
         wifiManager.startScan()
+    }
+
+    suspend fun pingGateway(context: Context): String = withContext(Dispatchers.IO) {
+        try {
+            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val lp = cm.getLinkProperties(cm.activeNetwork)
+            val gateway = lp?.routes?.find { it.isDefaultRoute }?.gateway?.hostAddress ?: "192.168.1.1"
+            val process = Runtime.getRuntime().exec("ping -c 3 $gateway")
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            var line: String?
+            val sb = StringBuilder()
+            while (reader.readLine().also { line = it } != null) {
+                sb.append(line).append("\n")
+            }
+            process.waitFor()
+            sb.toString().ifEmpty { "Ping completado a $gateway sin respuesta detallada." }
+        } catch (e: Exception) {
+            "Error al realizar ping con el Abismo: ${e.message}"
+        }
     }
 
     suspend fun getWifiPasswordRoot(targetSsid: String): String = withContext(Dispatchers.IO) {
