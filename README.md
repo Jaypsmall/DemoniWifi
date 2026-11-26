@@ -1,9 +1,12 @@
-# 😈 DemoniWifi 📡
+# 😈 DemoniWifi 📡   ![Android](https://img.shields.io/badge/Android-181717?style=flat&logo=android&logoColor=green) ![Kotlin](https://img.shields.io/badge/Kotlin-181717?style=flat&logo=kotlin&logoColor=C81AEE) <a href="https://kotlinlang.org" target="_blank"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/kotlin/kotlin-original.svg" height="30" alt="Kotlin" />
 
-## **DemoniWifi App**    ![Android](https://img.shields.io/badge/Android-181717?style=flat&logo=android&logoColor=yellow) ![Kotlin](https://img.shields.io/badge/kotlin-181717?style=flat&logo=kotlin&logoColor=yellow) 
-It is a mobile application featuring a themed interface designed for network testing and Wi-Fi connection audits. The tool allows you to manage scans of nearby networks and execute test sequences using predefined credentials.
+**😈 DemoniWifi** Es una aplicación móvil con una interfaz temática diseñada para pruebas de red y auditorías de conexión Wi-Fi. La herramienta permite gestionar escaneos de redes cercanas y ejecutar secuencias de prueba con credenciales predefinidas.
 
-**https://github.com/Jaypsmall/DemoniWifi/releases/download/android/DemoniWifi_v1.0.4.apk**
+
+<a href="https://github.com/Jaypsmall/DemoniWifi/releases/download/android/DemoniWifi_v1.0.5.apk">
+    <img src="https://img.shields.io/badge/📥_DESCARGAR_DEMONIWIFI_v1.0.5_APK-181717?style=for-the-badge&logo=android&logoColor=00FF66" alt="Descargar APK">
+  </a>
+
 
 ---
 
@@ -13,28 +16,42 @@ It is a mobile application featuring a themed interface designed for network tes
 
 ---
 
-## 🚀 Key Features
+## 🚀 Características principales
 
-* **Network Scanning (Wi-Fi Dimension):** Displays available Wi-Fi networks in real-time, specifying the SSID, signal strength (RSSI), and security protocol (WPA2, OPEN, etc.).
-* **Mass / Sequential Attack:** Allows you to select multiple target networks to perform chained authentication tests.
-* **Batch Key Injection:** Ability to test universal credentials or test parameters sequentially on selected access points.
-* **Custom Interface:** Themed visual style with real-time status indicators (*Processing souls...*, *Connecting classic-style...*, *Connection ritual complete*).
+* **Escaneo de red (Wi-Fi Dimension):** Muestra las redes Wi-Fi disponibles en tiempo real, especificando el SSID, la intensidad de la señal (RSSI) y el protocolo de seguridad (WPA2, OPEN, etc.).
+
+* **Ataque masivo/secuencial:** Permite seleccionar varias redes objetivo para realizar pruebas de autenticación encadenadas.
+
+* **Inyección de claves por lotes:** Permite probar credenciales universales o parámetros de prueba secuencialmente en puntos de acceso seleccionados.
+
+* **Interfaz personalizada:** Estilo visual con temas e indicadores de estado en tiempo real (Procesando almas...*, *Conectando estilo clásico...*, *Ritual de conexión completado*).
+ 
+---
+
+## 🛠️ Instrucciones de uso 
+
+1. **Dimensiones de escaneo:** Toque el botón superior para actualizar la lista de redes detectadas. 
+
+2. **Seleccionar objetivos:** Marque la casilla junto a las redes que desea auditar. 
+
+3. **Ingresar credenciales:** Ingrese la clave de prueba en el campo *Clave de Abyss (General)*. 
+
+4. **Ejecutar:** Presione **INVOCAR ATAQUE SECUENCIAL** para iniciar la secuencia de prueba en los objetivos seleccionados.
 
 ---
 
-## 🛠️ Usage Instructions
+## 📄 Licencia & Copyright
 
-1. **Scan Dimension:** Tap the top button to refresh the list of detected networks.
-2. **Select Targets:** Check the box next to the networks you wish to audit.
-3. **Enter Credential:** Input the test key into the *Abyss Key (General)* field.
-4. **Execute:** Press **INVOKE SEQUENTIAL ATTACK** to start the test sequence on the selected targets.
+Copyright © 2026. Todos los derechos reservados. El código fuente de esta aplicación es propiedad privada del desarrollador. Se prohíbe la reproducción, distribución o modificación no autorizada de este software. 
 
----
-
-## 👥 Credits
-
-Developed by **Jayliz & Demoni-Team**
+***Desarrollado con 💜 por un desarrollador independiente.***
 
 ---
 
-> **Notice:** This tool has been designed exclusively for educational purposes and for testing in private or authorized environments.
+## 👥 Creditos
+
+Desarrollado por **Jaypsmall y Demoni-Team**
+
+---
+
+> **Aviso:** Esta herramienta ha sido diseñada exclusivamente con fines educativos y para realizar pruebas en entornos privados o autorizados.
